@@ -1,3 +1,3 @@
 # Book-Store-Project
 
-first ruby OOP project &LibUI
+first ruby OOP project & LibUI
