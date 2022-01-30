@@ -1,1 +1,0 @@
-#{high_entry_val}
