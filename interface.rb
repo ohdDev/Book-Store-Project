@@ -53,17 +53,203 @@ def AddItemWindow()
   return addItemWindow
 end
 
-def DeleteItemWindow()
-  deleteitemWindow = UI.new_window("", 400,600,1)
+def ListMostExpensiveWindow()
+
+
+  Bookstore1::Manager
+  moE =  Bookstore1::Manager.mostEx
   
-  return deleteitemWindow
+
+  showB = "Title, Price, Author, Pages, ISBN"
+  showB += "\n-----------------------------------------"
+  moE.each do |book,i|
+    showB += "\n#{book.Title}, #{book.Price}, #{book.AuthorName}, #{book.NumOfPages}, #{book.ISBN}\n"
+  end
+  
+  UI.msg_box(MAIN_WINDOW, 'Most 3 Expensive Books are:', showB)
+  return UI.main
+
+end 
+
+def ListPriceRangeWindow()
+  listRangeWindow = UI.new_window('List books within a range', 400, 600, 1)
+
+  vbox_price_range = UI.new_vertical_box
+  UI.window_set_child(listRangeWindow,vbox_price_range)
+  
+  #  Low price entry
+  low_entry = UI.new_entry
+  UI.entry_set_text(low_entry,
+    "Enter the lower price\n")
+
+  low_entry_val = ""
+
+  UI.entry_on_changed(low_entry) do |i|
+    low_entry_val = UI.entry_text(i).to_s
+    puts "lower price: '#{low_entry_val}'"
+  end
+
+  UI.box_append(vbox_price_range, low_entry, 1)
+
+  #  high price entry
+  high_entry = UI.new_entry
+  UI.entry_set_text(high_entry,
+    "Enter the higher price\n")
+
+  high_entry_val = ""
+
+  UI.entry_on_changed(high_entry) do |i|
+    high_entry_val = UI.entry_text(i).to_s
+    puts "higher data: '#{high_entry_val}'"
+  end
+
+  UI.box_append(vbox_price_range, high_entry, 1)
+
+  #get range button
+  get_range_button = UI.new_button("get range")
+
+  Bookstore1::Manager
+  rangeB = "Title, Price, Author, Pages, ISBN"
+  rangeB += "\n-----------------------------------------"
+  UI.button_on_clicked(get_range_button) do
+    #check if input is either book or mag
+    #display the format if book or mag
+    #add to the desired file
+    booksRange = Bookstore1::Manager.listRange(low_entry_val,high_entry_val)
+    booksRange.each { |book,i|
+      rangeB += "\n#{book.Title}, #{book.Price}, #{book.AuthorName}, #{book.NumOfPages}, #{book.ISBN}\n"
+    }
+
+    UI.msg_box(listRangeWindow, 'Rnge Books', rangeB)
+  end
+    #if you have time fix the input validation!!!
+    
+  UI.box_append(vbox_price_range, get_range_button, 0)
+  return listRangeWindow
 end
 
-def ListMostExpensiveWindow()
-  listMostExp = UI.new_window("", 400,600,1)
+def SearchMagByDateWindow()
+
+  searchByDateWindow = UI.new_window('Search Mags By Date', 400, 600, 1)
+
+  vbox_search_by_date = UI.new_vertical_box
+  UI.window_set_child(searchByDateWindow,vbox_search_by_date)
   
-  return listMostExp
-end 
+  #  Low price entry
+  date_entry = UI.new_entry
+  UI.entry_set_text(date_entry,
+    "Enter date in the fourmela: dd-m-yyyy\n")
+
+  date_entry_val = ""
+
+  UI.entry_on_changed(date_entry) do |i|
+    date_entry_val = UI.entry_text(i).to_s
+    puts "lower price: '#{date_entry_val}'"
+  end
+
+  UI.box_append(vbox_search_by_date, date_entry, 1)
+
+  #get search button
+  search_button = UI.new_button("search")
+
+  Bookstore1::Manager
+  mag = "title,price,publisher-agent,date"
+  mag += "\n-----------------------------------------"
+
+  UI.button_on_clicked(search_button) do
+    #check if input is either book or mag
+    #display the format if book or mag
+    #add to the desired file
+    date_entry_val = date_entry_val.to_s
+    searchMag = Bookstore1::Manager.SearchByDate(date_entry_val)
+    searchMag.each { |mags,i| 
+      mag += "\n#{mags.Title}, #{mags.Price}, #{mags.Publisher}, #{mags.Date}\n"
+    }
+
+    UI.msg_box(searchByDateWindow, "Mags that published at: #{date_entry_val}", mag)
+  end
+    #if you have time fix the input validation!!!
+    
+  UI.box_append(vbox_search_by_date, search_button, 0)
+  return searchByDateWindow
+
+end
+
+def SearchMagByPublisherWindow()
+
+  searchByPubWindow = UI.new_window('Search Mags By Date', 400, 600, 1)
+
+  vbox_search_by_pub = UI.new_vertical_box
+  UI.window_set_child(searchByPubWindow,vbox_search_by_pub)
+  
+  #  Low price entry
+  publisher_entry = UI.new_entry
+  UI.entry_set_text(publisher_entry,
+    "Enter publisher name\n")
+
+    publisher_entry_val = ""
+
+  UI.entry_on_changed(publisher_entry) do |i|
+    publisher_entry_val = UI.entry_text(i).to_s
+    puts "lower price: '#{publisher_entry_val}'"
+  end
+
+  UI.box_append(vbox_search_by_pub, publisher_entry, 1)
+
+  #get search button
+  search_button = UI.new_button("search")
+
+  Bookstore1::Manager
+  
+
+  UI.button_on_clicked(search_button) do
+    mag = "title,price,publisher-agent,date"
+    mag += "\n-----------------------------------------"
+    #check if input is either book or mag
+    #display the format if book or mag
+    #add to the desired file
+    # publisher_entry_val = publisher_entry_val.to_s
+    searchMag = Bookstore1::Manager.SearchByPublisher(publisher_entry_val)
+    searchMag.each { |mags,i| 
+      mag += "\n#{mags.Title}, #{mags.Price}, #{mags.Publisher}, #{mags.Date}\n"
+    }
+
+    UI.msg_box(searchByPubWindow, "Mags that published by: #{publisher_entry_val}", mag)
+
+  end
+    #if you have time fix the input validation!!!
+    
+  UI.box_append(vbox_search_by_pub, search_button, 0)
+  return searchByPubWindow
+
+end
+
+def DeleteItemWindow()
+end
+
+def ListItemWindow()
+  Bookstore1::Manager
+  listArray =  Bookstore1::Manager.ListItem
+  p listArray
+
+  showB = "*****BOOKS*****\n"
+  showB += "\nTitle, Price, Author, Pages, ISBN"
+  showB += "\n-----------------------------------------"
+  listArray[0].each do |book,i|
+    showB += "\n#{book.Title}, #{book.Price}, #{book.AuthorName}, #{book.NumOfPages}, #{book.ISBN}\n"
+  end
+
+  showB += "\n*****MAGAZINES*****\n"
+  showB += "\nTitle, Price, Publisher, Date"
+  showB += "\n-----------------------------------------"
+  listArray[1].each do |mags,i|
+    showB += "\n#{mags.Title}, #{mags.Price}, #{mags.Publisher}, #{mags.Date}\n"
+  end
+  
+  UI.msg_box(MAIN_WINDOW, 'List All Items', showB)
+  return UI.main
+end
+
 # new window 
 # vbox - hbox 
 # group --> child of hbox
@@ -87,6 +273,22 @@ def show(name)
     
     when 'listMostExpensive'
       the_window = ListMostExpensiveWindow()
+    
+    when 'listbooksrange'
+      the_window = ListPriceRangeWindow()
+    
+    when 'searchbydate'
+      the_window = SearchMagByDateWindow()
+    
+    when 'searchbypublisher'
+      the_window = SearchMagByPublisherWindow()
+    
+    when 'listitem'
+      the_window = ListItemWindow()
+
+    when 'deleteitem'
+      the_window = DeleteItemWindow()
+
     else 
       puts "error"
   end
@@ -148,28 +350,28 @@ UI.box_append(inner, button3, 0)
 # Button4 -- Search Magazine by date
 button4 = UI.new_button('Search Magazine by date')
 UI.button_on_clicked(button4) do
-  show()
+  show('searchbydate')
 end
 UI.box_append(inner, button4, 0)
 
 # Button5 -- Search Magazine by publisher
 button5 = UI.new_button('Search Magazine by publisher')
 UI.button_on_clicked(button5) do
-  show()
+  show('searchbypublisher')
 end
 UI.box_append(inner, button5, 0)
 
 # Button6 -- List all store items
 button6 = UI.new_button('List all store items')
 UI.button_on_clicked(button6) do
-  show()
+  show('listitem')
 end
 UI.box_append(inner, button6, 0)
 
 # Button7 - Delete an item
 button7 = UI.new_button('Delete an item')
 UI.button_on_clicked(button7) do
-  show('deleteItem')
+  show('deleteitem')
 end
 
 UI.box_append(inner, button7, 0)
