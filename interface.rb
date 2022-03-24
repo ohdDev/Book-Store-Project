@@ -20,13 +20,35 @@ def AddItemWindow()
 
   vbox_add_item = UI.new_vertical_box
   UI.window_set_child(addItemWindow,vbox_add_item)
+
+    #fileName entry button
+    file_entry = UI.new_entry
+    UI.entry_set_text(file_entry,
+      "enter a new item,\n with the format title ,price, author name, number of pages, isbn\n")
+      #do a group to set static title --> when u have time!!!
+      #fix the display --> when u have time!!!
   
-  #entry button
+  # item entry
+  file_entry = UI.new_entry
+  UI.entry_set_text(file_entry,
+    "type 'book' to choose book or 'magazine' to choose magazine \n")
+
+    file_entry_val = ""
+
+  UI.entry_on_changed(file_entry) do |i|
+    file_entry_val = UI.entry_text(i).to_s
+    puts "item: '#{file_entry_val}'"
+  end
+
+  UI.box_append(vbox_add_item, file_entry, 1)
+
+  # item entry
   item_entry = UI.new_entry
   UI.entry_set_text(item_entry,
-    "enter a new item,\n with the format title ,price, author name, number of pages, isbn\n")
-    #do a group to set static title --> when u have time!!!
-    #fix the display --> when u have time!!!
+  "Enter book in this format: 
+  title,price,author name,number of pages,isbn.
+  Enter magazine in this format: 
+  title,price,publisher-agent,publish-date.\n")
 
   entry = ""
 
@@ -44,8 +66,14 @@ def AddItemWindow()
     #check if input is either book or mag
     #display the format if book or mag
     #add to the desired file
+    if file_entry_val == "book"
     Bookstore1::Manager.AddItem(entry,"Books.txt")
     UI.msg_box(addItemWindow, 'Information', 'You added a new item!')
+
+    elsif file_entry_val == "magazine"
+      Bookstore1::Manager.AddItem(entry,"Magazines.txt")
+      UI.msg_box(addItemWindow, 'Information', 'You added a new item!')
+    end
   end
     #if you have time fix the input validation!!!
     
@@ -56,7 +84,12 @@ end
  def ListMostExpensiveWindow()
 
 
-  Bookstore1::Manager
+  mostExWindow = UI.new_window('Most Expensive Item', 400, 600, 1)
+
+  vbox_most_ex = UI.new_vertical_box
+  UI.window_set_child(mostExWindow,vbox_most_ex)
+
+  # Bookstore1::Manager
   moE =  Bookstore1::Manager.mostEx
   
 
@@ -65,9 +98,16 @@ end
   moE.each do |book,i|
     showB += "\n#{book.Title}, #{book.Price}, #{book.AuthorName}, #{book.NumOfPages}, #{book.ISBN}\n"
   end
+
+  most_ex_button = UI.new_button("List Items")
+
+  # p Bookstore1::Manager
+  UI.button_on_clicked(most_ex_button) do
+    UI.msg_box(mostExWindow, 'Most 3 Expensive Books are:', showB)
+  end
   
-  UI.msg_box(MAIN_WINDOW, 'Most 3 Expensive Books are:', showB)
-  return UI.main
+  UI.box_append(vbox_most_ex, most_ex_button, 1)
+  return mostExWindow
 
 end 
 
