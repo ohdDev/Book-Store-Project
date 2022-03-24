@@ -53,7 +53,7 @@ def AddItemWindow()
   return addItemWindow
 end
 
-def ListMostExpensiveWindow()
+ def ListMostExpensiveWindow()
 
 
   Bookstore1::Manager
@@ -126,6 +126,7 @@ def ListPriceRangeWindow()
     
   UI.box_append(vbox_price_range, get_range_button, 0)
   return listRangeWindow
+
 end
 
 def SearchMagByDateWindow()
@@ -177,12 +178,12 @@ end
 
 def SearchMagByPublisherWindow()
 
-  searchByPubWindow = UI.new_window('Search Mags By Date', 400, 600, 1)
+  searchByPubWindow = UI.new_window('Search Mags By Publisher', 400, 600, 1)
 
   vbox_search_by_pub = UI.new_vertical_box
   UI.window_set_child(searchByPubWindow,vbox_search_by_pub)
   
-  #  Low price entry
+
   publisher_entry = UI.new_entry
   UI.entry_set_text(publisher_entry,
     "Enter publisher name\n")
@@ -191,7 +192,7 @@ def SearchMagByPublisherWindow()
 
   UI.entry_on_changed(publisher_entry) do |i|
     publisher_entry_val = UI.entry_text(i).to_s
-    puts "lower price: '#{publisher_entry_val}'"
+    puts "publisher name: '#{publisher_entry_val}'"
   end
 
   UI.box_append(vbox_search_by_pub, publisher_entry, 1)
@@ -225,12 +226,89 @@ def SearchMagByPublisherWindow()
 end
 
 def DeleteItemWindow()
+
+  deleteItemWindow = UI.new_window('Delete Item', 400, 600, 1)
+
+  vbox_delete_item = UI.new_vertical_box
+  UI.window_set_child(deleteItemWindow,vbox_delete_item)
+
+  # item entry
+  item_entry = UI.new_entry
+  UI.entry_set_text(item_entry,
+    "type 'book' to choose book or 'magazine' to choose magazine \n")
+
+    item_entry_val = ""
+
+  UI.entry_on_changed(item_entry) do |i|
+    item_entry_val = UI.entry_text(i).to_s
+    puts "item: '#{item_entry_val}'"
+  end
+
+  UI.box_append(vbox_delete_item, item_entry, 1)
+
+
+  # title entry
+  title_entry = UI.new_entry
+  UI.entry_set_text(title_entry,
+    "type item title to delete \n")
+
+    title_entry_val = ""
+
+  UI.entry_on_changed(title_entry) do |i|
+    title_entry_val = UI.entry_text(i).to_s
+    puts "item: '#{title_entry_val}'"
+  end
+
+  UI.box_append(vbox_delete_item, title_entry, 1)
+
+  # delete button
+  delete_button = UI.new_button("delete item")
+  
+  UI.button_on_clicked(delete_button) do
+    #check if input is either book or mag
+    #display the format if book or mag
+    #add to the desired file
+    deleteItem = Bookstore1::Manager.DeleteItem(title_entry_val ,item_entry_val)
+    p deleteItem
+    showI = "*****Item*****\n"
+
+    if deleteItem.kind_of?(Array)
+
+      if item_entry_val == "magazine"
+        deleteItem.each do |mags|
+          showI += "\n#{mags.Title}, #{mags.Price}, #{mags.Publisher}, #{mags.Date}\n"
+        end
+      elsif item_entry_val == "book"
+        deleteItem.each do |book|
+          showI += "\n#{book.Title}, #{book.Price}, #{book.AuthorName}, #{book.NumOfPages}, #{book.ISBN}\n"
+        end
+      end
+    
+      UI.msg_box(deleteItemWindow, 'delete item', showI)
+    else
+      UI.msg_box(deleteItemWindow, 'delete item', deleteItem)
+    end
+    
+
+  end
+
+
+  UI.box_append(vbox_delete_item, delete_button, 1)
+  return deleteItemWindow
+
 end
 
 def ListItemWindow()
-  Bookstore1::Manager
+
+  listItemsWindow = UI.new_window('List All Item', 400, 600, 1)
+
+  vbox_list_item = UI.new_vertical_box
+  UI.window_set_child(listItemsWindow,vbox_list_item)
+
+
+  # Bookstore1::Manager
   listArray =  Bookstore1::Manager.ListItem
-  p listArray
+  # p listArray
 
   showB = "*****BOOKS*****\n"
   showB += "\nTitle, Price, Author, Pages, ISBN"
@@ -246,8 +324,16 @@ def ListItemWindow()
     showB += "\n#{mags.Title}, #{mags.Price}, #{mags.Publisher}, #{mags.Date}\n"
   end
   
-  UI.msg_box(MAIN_WINDOW, 'List All Items', showB)
-  return UI.main
+
+  list_button = UI.new_button("List All Items")
+  
+  UI.button_on_clicked(list_button) do
+      UI.msg_box(listItemsWindow, 'List All Items', showB)
+  end
+
+  UI.box_append(vbox_list_item, list_button, 1)
+  return listItemsWindow
+
 end
 
 # new window 

@@ -1,3 +1,4 @@
+
 module Bookstore1
 
   class StoreItem
@@ -73,6 +74,8 @@ module Bookstore1
 
   class LibraryManager
   
+    require 'enumerator'
+
     
     def initialize()
       @books = Array.new
@@ -181,14 +184,73 @@ module Bookstore1
       # item.display() 
       magByDate.push(item)
       end }
-    return magByDate
+      return magByDate
     end
 
     def DeleteItem(itemToDel, fileName)
     
       #checking statement if exsists delete,
         #else "error msg"
+
+        #mags-> search by title
+      item_arr = []
+      file_lines = ''
+      
+
+      if fileName == "magazine"
+
+        mags = readItems("Magazines.txt")
+
+        mags.each_index.select{ |el| if (itemToDel == mags[el][0])
+          item = Magazine.new(mags[el][0],mags[el][1],mags[el][2],mags[el][3])
+
+          # item.display() 
+          item_arr.push(item)
+          
+        end }
+
+        IO.readlines("Magazines.txt").each do |line|
+          file_lines += line unless line.split(',').first == itemToDel
+        end
         
+        
+        File.open("Magazines.txt", 'w') do |file|
+          file.puts file_lines
+        end
+
+      elsif fileName == "book"
+
+        books = readItems("Books.txt")
+
+        books.each_index.select{ |el| if (itemToDel == books[el][0])
+          item = Book.new(books[el][0],books[el][1],books[el][2],books[el][3],books[el][4])
+
+          # item.display() 
+          item_arr.push(item)
+        
+        end }
+
+        IO.readlines("Books.txt").each do |line|
+
+          file_lines += line unless line.split(',').first == itemToDel
+       
+           
+        end
+      
+      
+        File.open("Books.txt", 'w') do |file|
+          file.puts file_lines
+        end
+
+        p file_lines
+
+      end 
+
+      if item_arr.empty?
+        return "Error, Item not exist please try again!!"
+      else
+        return item_arr
+      end
 
     end
 
